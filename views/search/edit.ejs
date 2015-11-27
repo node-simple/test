@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/head %>
+    </head>
+    <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <div>
+        <% include partials/top %>
+    <!-- main start-->
+    <!-- views/search/new.ejs -->
+         <div class="bs-example">
+            <div class="panel panel-default">
+            <div class="panel-heading"> 
+                <a href="/search/<%=data.id%>"><button>Back</button></a>
+            </div>
+            <div class="panel-heading"> 
+
+                <form class="form" action="/search/<%=data._id%>?_method=put" method="post" id="frmParams">
+                        <label>검색어</label>
+                        <input type="text" name="post[query]" value="<%=data.query%>" id="query">
+                        <label>메모</label>
+                        <input type="text" name="post[memo]" value="<%=data.memo%>" id="memo">
+                        <label>정렬</label>
+                        <select class="selectpicker" name="post[sort]" id="sort">
+                            <option value="sim"  <% if (data.sort == "sim") {   %> selected=selected <% }%>>유사도</option>
+                            <option value="date" <% if (data.sort == "date") {   %> selected=selected <% }%>>날짜</option>
+                            <option value="asc" <% if (data.sort == "asc") {   %> selected=selected <% }%>>가격오름차순</option>
+                            <option value="dsc" <% if (data.sort == "dsc") {   %> selected=selected <% }%>>가격내림차순</option>
+                        </select>                          
+                        <button type="button" id="btnSubmit"> Submit</button>
+                </form>
+             </div>
+           </div>
+        </div>
+    <!-- main end -->
+        </div><!--search end -->
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSubmit").click(function (){
+            if ($("#query").val() == "")
+            {
+                alert("검색어 입력");
+                return;
+            }
+            if ($("#memo").val() == "")
+            {
+                alert("메모 입력");
+                return;
+            }      
+            if ($("#sort").val() == "")
+            {
+                alert("정렬 입력");
+                return;
+            } 
+            $("#frmParams").submit();
+        });
+
+    });
+</script>

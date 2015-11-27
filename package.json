@@ -1,0 +1,24 @@
+{
+  "name": "noder",
+  "version": "1.0.0",
+  "description": "A simple install",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "author": "yoon",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "*",
+    "bootstrap": "^3.3.5",
+    "cookie-parser": "*",
+    "ejs": "*",
+    "express": "*",
+    "method-override": "^2.3.5",
+    "mongoose": "latest",
+    "socket.io": "*"
+  }
+}

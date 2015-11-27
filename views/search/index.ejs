@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/head %>
+    </head>
+    <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <div>
+        <% include partials/top %>
+    <!-- main start-->
+    <!-- views/search/index.ejs -->
+            <div class="bs-example" data-example-id="panel-without-body-with-table">
+               
+                <div class="panel panel-default">
+                  <!-- Default panel contents -->
+                  <div class="panel-heading"> 
+                    <form class="form" action="/search" method="post" id="frmParams">
+                            <label>검색어</label>
+                            <input type="text" name="post[query]" vlaue="" id="query">
+                            <label>메모</label>
+                            <input type="text" name="post[memo]" vlaue="" id="memo">
+                            <label>정렬</label>
+                            <select class="selectpicker" name="post[sort]" id="sort">
+                                <option value="sim">유사도</option>
+                                <option value="date">날짜</option>
+                                <option value="asc">가격오름차순</option>
+                                <option value="dsc" >가격내림차순</option>
+                            </select>                            
+                            <button type="button" id="btnSubmit"> Submit</button>* 검색어, 메모 필수값
+                    </form>
+                  </div>
+                  
+                  <!-- Table -->
+                  <table class="table">
+                    <tbody>
+                    <% data.forEach(function(e){ %>
+                        <tr>
+                            <td>
+                                <a href="/search/<%= e._id %>"><%= e.query %> </a>
+                                <span> <%= e.createdAt.toLocaleDateString() %></span>
+                            </td>
+                        </tr>
+                    <% })%>                        
+                    </tbody>
+                  </table>
+                </div>
+              </div>   
+    <!-- main end -->
+        </div><!--search end -->
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSubmit").click(function (){
+            if ($("#query").val() == "")
+            {
+                alert("검색어 입력");
+                return;
+            }
+            if ($("#memo").val() == "")
+            {
+                alert("메모 입력");
+                return;
+            }      
+            if ($("#sort").val() == "")
+            {
+                alert("정렬 입력");
+                return;
+            } 
+            $("#frmParams").submit();
+        });
+
+    });
+</script>

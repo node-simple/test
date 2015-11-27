@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <% include ../partials/head %>
+    </head>
+    <body>
+        <div class="container">
+        <header>
+            <% include ../partials/header %>
+        </header>            
+        <% include partials/top %>
+    <!-- main start-->
+    <!-- views/search/show.ejs -->
+
+        <!-- Title -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Latest Features</h3>
+            </div>
+        </div>
+
+
+    <!-- /.container -->    
+
+         <div class="bs-example">
+            <div class="panel panel-default">
+             <div class="panel-heading"> 
+                 <h3><%= data.query %></h3>
+                 <div>등록일 : <%= data.createdAt.toLocaleDateString() %> <%= data.createdAt.toLocaleTimeString() %>
+             	 </div>
+
+                 <% if(data.updatedAt) { %>
+                 <div> 수정일 <%= data.updatedAt.toLocaleDateString() %> <%= data.updatedAt.toLocaleTimeString() %> 
+                 </div>
+                 <%} %>
+                 <div>
+                    <select class="selectpicker" id="search_sort">
+                        <option value="sim"  <% if (data.sort == "sim") {   %> selected=selected <% }%>>유사도</option>
+                        <option value="date" <% if (data.sort == "date") {   %> selected=selected <% }%>>날짜</option>
+                        <option value="asc" <% if (data.sort == "asc") {   %> selected=selected <% }%>>가격오름차순</option>
+                        <option value="dsc" <% if (data.sort == "dsc") {   %> selected=selected <% }%>>가격내림차순</option>
+                    </select>                      
+                 </div>
+
+             </div>
+
+
+             <div class="panel-heading"> 
+			 <div class="btn-group" style="width:100%">
+			    <a href="/search/<%=data._id%>/edit" style="float:left;padding-right:10px"><button>Edit</button></a>
+			    <!-- delete button here -->
+                <form class="btn_delete" action="/search/<%=data.id%>?_method=delete" method="post">
+                    <button type="submit"  style="float:left;">delete</button>
+                </form>
+                <a href="/search"  style="float:left;float:left;padding-left:10px"><button>Back</button></a>
+  	         </div>
+			 </div>
+      
+           </div>
+	    </div>
+
+        <!-- Page Features -->
+        <div id="group">
+        <div class="row text-center" id="list" data-page="1" data-total="0" data-query="" data-sort="">
+            <div class="__oldlist">검색 결과가 없습니다. </div>
+            <div class="col-md-3 col-sm-6 hero-feature __template" style="display: none">
+                <div class="thumbnail">
+                    <!--<img src="#image#" alt="" style="width:300px;height:180px">-->
+                    <div class="caption">
+                        <h6>#title#</h6>
+                        <p>#lprice# / #hprice#</p>
+                        <p>#mallname#</p>
+                        <p>
+                            <a href="#link#" class="btn btn-primary" target="_blank">Buy Now!</a> 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul class="pagination">
+            </ul>
+        </nav>        
+        </div>
+        <!-- /.row -->        
+
+
+<!--
+
+        <table cellspacing="0" border="1" summary="쇼핑검색 API 결과" class="tbl_type">
+        <caption>쇼핑검색 API 결과</caption>
+                <colgroup>
+                        <col width="10%">
+                        <col width="45%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                </colgroup>
+                <thead>
+                        <tr>
+                        <th scope="col"></th>
+                        <th scope="col">제목</th>
+                        <th scope="col">최저가</th>
+                        <th scope="col">최고가</th>
+                        <th scope="col">상점</th>
+                        </tr>
+                </thead>
+                <tbody id="list2">
+                        <tr class="__oldlist" style="">
+                                <td colspan="7">검색 결과가 없습니다.</td>
+                        </tr>
+                        <tr class="__template" style="display: none">
+                                <td><img src="#image#"  width="50px" height="70px" /></td>
+                                <td>#title#</td>
+                                <td>#lprice#</td>
+                                <td>#hprice#</td>
+                                <td>#mallname#</td>
+                        </tr>
+                </tbody>
+        </table>  
+              -->
+
+    <!-- main end -->
+        </div><!--search end -->
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>
+
+
+<script type="text/javascript">
+
+        function callAjax(query, page, sort) {
+                 $('#group').block({ 
+                    message: '<h1>loading</h1>', 
+                    css: { border: '3px solid #a00' } 
+                }); 
+
+                $.ajax({
+                        url:'/naversearch',
+                        dataType:'json',
+                        type:'POST',
+                        data:{'query':query, 'page':page, 'sort':sort},
+                        success:function(result){
+                               
+                                var channel = result['data']['channel'];
+                                if(channel['display'] > 0){
+                                    if (Number(channel['total']) > 100 && Number($("#list").data("total")) == 0)
+                                    {
+                                        var totalpage = Number(channel['total']);
+                                        var blockpage = totalpage / 100;
+                                        blockpage = parseInt(blockpage);
+                                        $("#list").data("total", blockpage);
+                                        $("#list").data("page", page);
+
+                                        $(".pagination").html('');
+
+                                        var nav = "";
+                                        for (var n=0; n < blockpage; n++)
+                                        {
+                                            if (Number(n+1) == page)
+                                            {
+                                                nav += "<li data-num="+Number(n+1)+" class='active'><a href='javascript:void(0)' ><span>"+Number(n+1)+"<span class='sr-only'>(current)</span></a></li>"
+                                            }else
+                                            {
+                                                nav += "<li data-num="+Number(n+1)+"><a href='javascript:void(0)' ><span>"+Number(n+1)+"<span class='sr-only'>(current)</span></a></li>"
+                                            }
+                                        }
+                                        $('.pagination').append(nav);
+                                        pageClick();
+
+                                   
+                                    }
+
+
+                                    if(channel['display'] > 0){
+                                            $('.__oldlist').remove();
+                                            for(var i in channel['item']){
+                                                    var item = channel['item'][i];
+                                                    $html = template('__template', item);
+                                                    $html.addClass('__oldlist');
+                                                    $('#list').append($html);
+                                                    $('.__oldlist').show();
+                                            }
+                                            $('#group').unblock();                              
+                                            
+                                    }else{
+                                            $('#result').html('');
+                                            $('#result').append("데이터가 없거나 정상적으로 로딩 되지 않았습니다.");
+                                            $('#group').unblock();                              
+                                    }
+                                }else 
+                                {
+                                    $('#result').html('');
+                                    $('#result').append("데이터가 없거나 정상적으로 로딩 되지 않았습니다.");       
+                                    $('#group').unblock();                              
+                                }
+                        }
+                });
+        };
+
+        function template(template_id, params){
+                var c = $('.' + template_id).clone();
+                var html = $('<div>').append(c).html();
+                for(var key in params){
+                        html = html.replace(new RegExp('#' + key + '#', 'g'), params[key]);
+                }
+                html = html.replace(/#template_([^#]*)#/g, '$1').replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+                var $html = $(html).removeClass(template_id).removeClass('__template');
+                return $html;
+        }
+
+        function callPage(next)
+        {
+            $("#list").data("page", next);
+            var page = $("#list").data("page");
+            var query = $("#list").data("query");
+            var sort = $("#list").data("sort");
+
+            callAjax(query, page, sort);
+        }
+
+
+    $(document).ready(function () {
+        $("#list").data("query", "<%= data.query %>");
+        $("#list").data("sort", "<%= data.sort %>");
+        callAjax('<%= data.query %>', '1', '<%= data.sort %>');
+        pageClick();
+
+        $("#search_sort").change(function () {
+            var query = $("#list").data("query");
+            var sort = $(this).val();            
+            var page = $("#list").data("page"); 
+            $("#list").data("sort", sort);                   
+            callAjax(query, page, sort);            
+        });
+
+    });
+
+    var pageClick = function () {
+        $(".pagination li a").click(function (){
+            var query = $("#list").data("query");
+            var sort = $("#list").data("sort");            
+            var page = $("#list").data("page");            
+            var num = $(this).parent().data("num");
+
+            if (page != num )
+            {
+                callAjax(query, num, sort);
+                $("#list").data("page", num);    
+                $(this).parent().parent().find("li").removeClass("active");
+                $(this).parent().addClass("active");
+            }
+
+        });             
+    }
+
+</script>
+
+
