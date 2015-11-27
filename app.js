@@ -35,9 +35,7 @@ var xml2json = require("node-xml2json");
 var request = require("request");
 
 // connect database
-//mongoose.connect(process.env.MONGO_DB);
-//mongoose.connect("mongodb://heroku_6ps1dp84:1b58q0erdlqrrh5ut1d28lqsoe@ds055584.mongolab.com:55584/heroku_6ps1dp84");
-mongoose.connect("mongodb://yoon:yoon@ds053944.mongolab.com:53944/yoon_common");
+mongoose.connect("mongodb://");
 var db = mongoose.connection;
 db.once("open",function () {
   console.log("DB connected!");
@@ -71,7 +69,7 @@ app.use(methodOverride("_method"));
 app.get('/', function(req,res){
 	Search.find({}).sort('-createdAt').exec(function (err, search) {
 		if(err) return res.json({success:false, message:err});
-		res.render("search/start", {data:search});
+		res.render("search/index", {data:search});
 	});
 });
 
@@ -105,16 +103,6 @@ app.get('/search/:id', function(req,res){
 
 	Search.findById(req.params.id, function (err, post) {
 		if(err) return res.json({success:false, message:err});
-
-		var json;
-		var str = post.query.replace(/ /gi,"+");
-		var options = { 
-		   host: 'openapi.naver.com', 
-		   port: 80, 
-		   path: '/search?key=425d3bb6d7450a1893026e0596291bd7&query='+str+'&display=5&start=1&target=shop&sort='+post.sort, 
-		   method: 'POST' 
-		}; 
-
 		res.render("search/show", {data:post, page:1});	
 	});
 });
@@ -158,7 +146,7 @@ app.post('/naversearch', function(req,res){
 		var options = { 
 		   host: 'openapi.naver.com', 
 		   port: 80, 
-		   path: '/search?key=425d3bb6d7450a1893026e0596291bd7&query='+str+'&display=100&start='+req.body.page+'&target=shop&sort='+req.body.sort, 
+		   path: '/search?key=key&query='+str+'&display=100&start='+req.body.page+'&target=shop&sort='+req.body.sort, 
 		   method: 'POST' 
 		}; 
 
