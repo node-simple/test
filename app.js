@@ -1,28 +1,3 @@
-// Setup basic express server
-/*
-var http = require('http');
-var fs = require('fs');
-var express = require('express');
-var bodyParser = require('body-parser')
-var ejs = require('ejs');
-var app = express();
-//app.use(bodyParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-var router = express.Router();
-app.use(express.static('public'));
-app.use(router);
-var port = process.env.PORT || 3000;
-router.get("/",function(req,res){
-  res.send("<h1>hello heroku node.js world</h1>");
-});
-
-http.createServer(app).listen(port, function(){
-  console.log('server run');
-});
-*/
 
 var http = require('http');
 var express = require('express');
@@ -35,7 +10,7 @@ var xml2json = require("node-xml2json");
 var request = require("request");
 
 // connect database
-mongoose.connect("mongodb://");
+//mongoose.connect("mongodb://");
 var db = mongoose.connection;
 db.once("open",function () {
   console.log("DB connected!");
@@ -67,10 +42,7 @@ app.use(methodOverride("_method"));
 // set routes
 
 app.get('/', function(req,res){
-	Search.find({}).sort('-createdAt').exec(function (err, search) {
-		if(err) return res.json({success:false, message:err});
-		res.render("search/index", {data:search});
-	});
+	res.redirect('/search');
 });
 
 app.get('/loginproc', function(req,res){
@@ -103,6 +75,16 @@ app.get('/search/:id', function(req,res){
 
 	Search.findById(req.params.id, function (err, post) {
 		if(err) return res.json({success:false, message:err});
+
+		var json;
+		var str = post.query.replace(/ /gi,"+");
+		var options = { 
+		   host: 'openapi.naver.com', 
+		   port: 80, 
+		   path: '/search?key=425d3bb6d7450a1893026e0596291bd7&query='+str+'&display=5&start=1&target=shop&sort='+post.sort, 
+		   method: 'POST' 
+		}; 
+
 		res.render("search/show", {data:post, page:1});	
 	});
 });
@@ -146,7 +128,7 @@ app.post('/naversearch', function(req,res){
 		var options = { 
 		   host: 'openapi.naver.com', 
 		   port: 80, 
-		   path: '/search?key=key&query='+str+'&display=100&start='+req.body.page+'&target=shop&sort='+req.body.sort, 
+		   path: '/search?key=425d3bb6d7450a1893026e0596291bd7&query='+str+'&display=100&start='+req.body.page+'&target=shop&sort='+req.body.sort, 
 		   method: 'POST' 
 		}; 
 
