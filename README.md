@@ -1,6 +1,7 @@
 node.js + mongolab crud test
 
 
-npm install
+1. npm install
 
-//mongoose.connect("mongodb://");  <<< account
+2. source
+  - //mongoose.connect("mongodb://");  <<< account
